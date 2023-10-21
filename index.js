@@ -32,7 +32,7 @@ async function run() {
     const coffeeCollection=client.db('productDB').collection('product')
 
     const userCollection=client.db('productDB').collection('user');
-
+    const cartCollection=client.db('productDB').collection('cart');
 
     app.get('/coffee',async(req,res)=>{
   const cursor=coffeeCollection.find();
@@ -113,6 +113,35 @@ app.patch('/user',async(req,res)=>{
     const result=await userCollection.updateOne(filter,updateDoc);
     res.send(result);
 })
+
+//cart related api
+app.get('/cart',async(req,res)=>{
+    const cursor=cartCollection.find();
+    const cart=await cursor.toArray();
+    res.send(cart);
+      })
+
+
+
+app.post('/cart',async(req,res)=>{
+    const cart=req.body;
+    console.log(cart);
+    const result=await cartCollection.insertOne(cart)
+    res.send(result);
+
+})
+
+
+//cart delete
+app.delete('/cart/:id',async(req,res)=>{
+    const id=req.params.id;
+    console.log('Received delete request for ID:', id);
+    const query={_id: id};
+    const result=await cartCollection.deleteOne(query);
+    res.send(result);
+})
+
+
 
 
 
